@@ -5,6 +5,7 @@ var autoprefixer = require('autoprefixer');
 var cssvars = require('postcss-simple-vars');
 var nested = require('postcss-nested');
 var cssImport = require('postcss-import');
+var browserSync = require('browser-sync').create();
 
 //Default Taske for Gulp
 gulp.task('default', function(){
@@ -22,12 +23,24 @@ gulp.task('styles', function(){
 });
 // watch task for gulp-watch triggered by html task
 gulp.task('watch', function(){
-	//watching saved changes in index.html file
+	//sets up automatic browser refresh on file save
+	browserSync.init({
+		notify: false,
+		server: {          //points to the local server that runs the index.html
+			baseDir: 'app'
+		}
+	});
+	//watching saved ch anges in index.html file
 	watch('./app/index.html', function(){
-		gulp.start('html');
+		browserSync.reload();
 	});
 	//watchin saved in folder styles
 	watch('./app/assets/styles/**/*.css', function(){
-		gulp.start('styles');
+		gulp.start('cssInject');
 	});
 }); 
+
+gulp.task('cssInject', ['styles'], function(){
+	return gulp.src('./app/temp/styles/styles.css')
+	.pipe(browserSync.stream());
+})
