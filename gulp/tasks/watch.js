@@ -19,9 +19,17 @@ gulp.task('watch', function(){
 	watch('./app/assets/styles/**/*.css', function(){
 		gulp.start('cssInject');
 	});
+	// watch for changes in .js files
+	watch('./app/assets/scripts/**/*.js', function(){
+		gulp.start('scriptsRefresh');
+	})
 }); 
 //handles the browser automatic refresh 
 gulp.task('cssInject', ['styles'], function(){
 	return gulp.src('./app/temp/styles/styles.css')
 	.pipe(browserSync.stream());
+});
+
+gulp.task('scriptsRefresh', ['scripts'], function(){
+	browserSync.reload();
 })
